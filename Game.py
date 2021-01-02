@@ -17,7 +17,10 @@ def draw():
 
 def idle():
     zombie.image = 'zombie_idle'
-
+ 
+def victim_idle():
+    victim.image = 'adventurer_idle' 
+# does something
 def zombie_action(action):
     if(action == 'walk'):
         zombie.walkFrame += 1
@@ -27,10 +30,15 @@ def zombie_action(action):
     if(action == 'kick'):
         zombie.image = 'zombie_kick'
         if(zombie.colliderect(victim)):
+            victim.image = 'adventurer_hurt'
             victim.right += 20
+            if(zombie.top>victim.top):
+                victim.bottom += 20
+            else:
+                victim.bottom -= 20
         clock.schedule_unique(idle, 0.1)
-
-
+        clock.schedule_unique(victim_idle, 0.5)
+    
 def on_key_down(key):
     if(key == key.DOWN):
         zombie.top += step_size
@@ -46,4 +54,3 @@ def on_key_down(key):
         zombie_action('walk')
     if(key == key.K):
         zombie_action('kick')
-
