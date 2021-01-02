@@ -4,16 +4,16 @@ HEIGHT=800
 zombie = Actor('zombie_idle')
 zombie.walkFrame = 0
 
-penguin = Actor('penguin')
+victim = Actor('adventurer_idle')
 
-penguin.top = 100
-penguin.left = 100
+victim.top = 100
+victim.left = 100
 step_size = 10
 
 def draw():
     screen.fill((128,128,128))
     zombie.draw()
-    penguin.draw()
+    victim.draw()
 
 def idle():
     zombie.image = 'zombie_idle'
@@ -26,8 +26,8 @@ def zombie_action(action):
         zombie.image = pose_file
     if(action == 'kick'):
         zombie.image = 'zombie_kick'
-        if(zombie.colliderect(penguin)):
-            penguin.right += 20
+        if(zombie.colliderect(victim)):
+            victim.right += 20
         clock.schedule_unique(idle, 0.1)
 
 
