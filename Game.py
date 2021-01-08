@@ -1,25 +1,37 @@
+import pygame
+import random
 WIDTH=800
 HEIGHT=800
+background = pygame.image.load("images/background.png")
 
 zombie = Actor('zombie_idle')
 zombie.walkFrame = 0
 
-victim = Actor('adventurer_idle')
+victims = []
+for m in range(0,3):
+  v = Actor('adventurer_idle')
+  v.top = random.randint(200, 600)
+  v.left = random.randint(200, 600)
+  victims.append(v)
 
-victim.top = 100
-victim.left = 100
 step_size = 10
 
 def draw():
-    screen.fill((128,128,128))
+    screen.clear()
+    screen.blit("background",(0,0))
+    #screen.fill((128,128,128))
     zombie.draw()
-    victim.draw()
+    for v in victims:
+      v.draw()
 
 def idle():
     zombie.image = 'zombie_idle'
- 
+
 def victim_idle():
-    victim.image = 'adventurer_idle' 
+    for v in victims:
+      if(v.image == 'adventurer_hurt'):
+        v.image = 'adventurer_idle'
+        victims.remove(v)
 # does something
 def zombie_action(action):
     if(action == 'walk'):
@@ -29,16 +41,18 @@ def zombie_action(action):
         zombie.image = pose_file
     if(action == 'kick'):
         zombie.image = 'zombie_kick'
-        if(zombie.colliderect(victim)):
-            victim.image = 'adventurer_hurt'
-            victim.right += 20
-            if(zombie.top>victim.top):
-                victim.bottom += 20
+        for v in victims:
+          if(zombie.colliderect(v)):
+            v.image = 'adventurer_hurt'
+            v.image = 'adventurer_hurt'
+            v.right += 20
+            if(zombie.top>v.top):
+                v.bottom += 20
             else:
-                victim.bottom -= 20
+                v.bottom -= 20
         clock.schedule_unique(idle, 0.1)
         clock.schedule_unique(victim_idle, 0.5)
-    
+
 def on_key_down(key):
     if(key == key.DOWN):
         zombie.top += step_size
