@@ -19,7 +19,7 @@ step_size = 10
 def draw():
     screen.clear()
     screen.blit("background",(0,0))
-    #screen.fill((128,128,128))
+
     zombie.draw()
     for v in victims:
       v.draw()
@@ -43,7 +43,6 @@ def zombie_action(action):
         zombie.image = 'zombie_kick'
         for v in victims:
           if(zombie.colliderect(v)):
-            v.image = 'adventurer_hurt'
             v.image = 'adventurer_hurt'
             v.right += 20
             if(zombie.top>v.top):
