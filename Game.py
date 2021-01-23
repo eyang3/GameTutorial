@@ -1,12 +1,14 @@
 import random
+import typing
 WIDTH=800
 HEIGHT=800
 
 zombie = Actor('zombie_idle')
 zombie.walkFrame = 0
-
+zombie_alive = True
 group = []
 lasers = []
+dir = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 RED = 200, 0, 0
 BOX = Rect((20, 20), (100, 20))
@@ -20,34 +22,58 @@ for i in range(0, 3):
 step_size=20
 
 def animate_laser():
+    global zombie_alive
+    which = 0
     for i in lasers:
-        i.right -= 10
-        if(i.left < 0):
+        laser = i['rect']
+        dir = i['dir']
+        # line is here to change the direction of the laser
+        laser.right = laser.right - 10 * (dir)
+        if(laser.right < 0):
             lasers.remove(i)
-
+        if(laser.left > 800):
+            lasers.remove(i)
+    # handle laser hitting zombie here
+    for i in lasers:
+        laser = i['rect']
+        if(zombie.colliderect(laser)):
+            zombie_alive=False
+    #if (zombie.colliderect(shootlasers))
+    #zombie.image = 'zombie_hurt.png'
+    
+    
+    
 def shootlasers():
+    which = 0
     for i in group:
         if len(lasers) < 10:
             if(i.bottom > zombie.top) and (i.top < zombie.bottom):
-                print('shoot laser')
                 r = Rect((20, 20), (50, 20))
                 r.right = i.left
                 r.y = i.y
-                lasers.append(r)
+                
+                value = 1
+                if(i.x < zombie.x):
+                    value = -1
+                lasers.append({"rect": r, "dir": value})
+                
+           
+             
  
 
 def update():
     animate_laser()
 
 def draw():
+    global zombie_alive
     screen.fill((128,128,128))
 
-    
-    zombie.draw()
+    if(zombie_alive):
+        zombie.draw()
     for i in group:
         i.draw()
     for i in lasers:
-        screen.draw.filled_rect(i, RED)
+        screen.draw.filled_rect(i['rect'], RED)
     
 def idle():
     zombie.image = 'zombie_idle'
@@ -59,6 +85,8 @@ def victim_idle():
         #zoomie.image = 'adventurer_idle' 
 # does something
 def zombie_action(action):
+    if(zombie_alive == False):
+        return
     shootlasers()
     if(action == 'walk'):
         zombie.walkFrame += 1
@@ -68,6 +96,7 @@ def zombie_action(action):
     if(action == 'kick'):
         zombie.image = 'zombie_kick'
         for zoomie in group:
+            ##### look here
             if(zombie.colliderect(zoomie)):
                 zoomie.image = 'adventurer_hurt'
                 zoomie.right += 20
